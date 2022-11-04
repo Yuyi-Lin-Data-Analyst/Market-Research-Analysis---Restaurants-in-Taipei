@@ -8,7 +8,7 @@ Any feedback would be welcomed and appreciated :) <br>
 
 ## Contents
 ### Data Analysis and Visualization Projects
-- 
+- Web Scrapping Project - ifoodie.tw (web_scrapping_project_ifoodie.py) <br>
 
 ### Data Collection (web scrapping) Projects
 - 
