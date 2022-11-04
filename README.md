@@ -10,6 +10,8 @@ Any feedback would be welcomed and appreciated :) <br>
 ### Data Analysis and Visualization Projects
 - 
 
-### Data Collection (web scrapping) Projects
-- [Web Scrapping Project - ifoodie.tw](https://github.com/Yuyi-Lin-Data-Analyst/data-analytic-portfolio/blob/main/web_scrapping_project_ifoodie.py) <br>
-    Used Request and BeautifulSoup to fetch the restaurant information in Taipei, Taiwan <br>
+### Data Collection (web scrapping) and Data cleaning Projects
+- [Restaurant Analysis Project - Web Scrapping](https://github.com/Yuyi-Lin-Data-Analyst/data-analytic-portfolio/blob/main/web_scrapping_project_ifoodie.py) <br>
+    Used Request and BeautifulSoup to fetch the restaurant information in Taipei, Taiwan from ifoodie.tw <br>
+- [Restaurant Analysis Project - Data Cleaning](https://github.com/Yuyi-Lin-Data-Analyst/data-analytic-portfolio/blob/main/data_cleaning_project_ifoodie.py) <br>
+    Clean data scrapped on ifoodie.tw with Pandas and Numpy  
