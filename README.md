@@ -13,6 +13,9 @@
 
 ### Geographic Dimension
 - Average Spent Per Person
+
+  ![image](https://github.com/user-attachments/assets/e438c9e7-0a53-49ee-b911-dc92d7cc8e43)
+
 > **Central Business District Premium:** 中山區 and 大安區, known for their central locations and business activities, command the highest average prices. This likely reflects higher rents, a concentration of high-end establishments, and a clientele with higher disposable incomes.
 > 
 
