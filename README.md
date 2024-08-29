@@ -41,6 +41,10 @@
   <p> </p>
 
  **Restaurant Density:**
+  <p> </p>
+ ![Untitled](https://github.com/user-attachments/assets/a0a79809-2d7c-4cf5-9dca-ab635c046e34)
+  <p> </p>
+ 
 > There is a significant concentration of restaurants in a few key districts, with a long tail of districts having fewer establishments.
 > 
 > 
@@ -59,8 +63,26 @@
 <p> </p>
 
 ### Restaurant Categories
-- Average Spent Per Person:
-- Restaurant Desity
+
+ **Price Disparity**
+> 
+> - The most significant price disparities are seen in Italian cuisine and cafes, with ranges of over 1000 TWD and 600 TWD respectively.
+> - Chinese and Japanese cuisine show more moderate price ranges, suggesting these categories might have more standardized pricing across the city.
+
+<p> </p>
+  
+**Combinations of Restaurant Types**
+> High-end Focus: 精緻高級 (high-end/refined) and 約會餐廳 (date restaurant) appear frequently in the top combinations, indicating a strong market for upscale dining experiences.
+> 
+
+> Diverse Offerings: Popular restaurants often combine different types of cuisine or dining styles (e.g., Chinese cuisine with bar services, or hotpot with high-end dining).
+> 
+
+> All-day Dining: Many top combinations include both 午餐 (lunch) and 晚餐 (dinner), suggesting a preference for restaurants that operate throughout the day.
+> 
+
+> Japanese Influence: Japanese cuisine, including 居酒屋 (izakaya), features prominently in the popular combinations. (e.g., 居酒屋 (izakaya) with hotpot)
+>
 
 
 ## Recommendations & Next Steps
