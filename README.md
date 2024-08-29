@@ -23,6 +23,7 @@
 >     - The lowest average prices are in 文山區 (235 TWD), 1.35 standard deviations below the mean.
 > - Approximately 68% of districts have average prices within 114.37 TWD of the overall mean (389 ± 114.37 TWD).
 
+<p> </p>
 
  **Category Variety:**
 > 
@@ -30,12 +31,14 @@
 > - This suggests that regardless of location or price level, most districts offer a similar variety of cuisine types.
 > - 大同區 has the highest variety with 79 categories, while 南港區 has the lowest with 71.
 
+<p> </p>
 
  **Price vs. Variety Relationship:**
 > 
 > - The districts with the highest prices (中山區 and 大安區) also have above-average category variety.
 > - There are no districts that clearly fit the criteria of "high prices but low variety" that we were initially looking for.
-  
+
+  <p> </p>
 
  **Restaurant Density:**
 > There is a significant concentration of restaurants in a few key districts, with a long tail of districts having fewer establishments.
@@ -53,8 +56,7 @@
 > Consumer Behavior: The concentration of restaurants might indicate where people prefer to dine out, which could be influenced by factors such as workplace locations, entertainment venues, or transportation hubs.
 >
 
-
-
+<p> </p>
 
 ### Restaurant Categories
 - Average Spent Per Person:
