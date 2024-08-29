@@ -1,0 +1,110 @@
+# Create database 
+CREATE DATABASE ifoodie_restaurant_data;
+SHOW DATABASES;
+
+# Create table
+USE ifoodie_restaurant_data;
+
+CREATE TABLE Restaurants (
+	Title varchar (255),
+    Address varchar (255),
+    Rating float (10),
+    Average_Price varchar(10),
+    Categories varchar(255),
+    PRIMARY KEY (Title)
+    )
+ENGINE=InnoDB;
+
+
+# Data pipeline (python -> mysql):
+
+import pandas as pd
+from sqlalchemy import create_engine
+
+# Create an engine instance to connet with sql database
+engine = create_engine('mysql+pymysql://root:mysql0730_@localhost/ifoodie_restaurant_data')
+
+# Write DataFrame to SQL table
+restaurant_data_df.to_sql('Restaurants', con = engine, if_exists= 'replace', index = False)
+
+
+# Data Cleaning and Preparation:
+
+# Remove rows where the title is NULL
+-- Temporarily disable safe mode to allow deletion of rows by primary key (title)
+SET SQL_SAFE_UPDATES = 0;
+DELETE FROM Restaurants WHERE title IS NULL;
+
+# Remove the index from the title
+UPDATE Restaurants
+SET title = TRIM(SUBSTRING_INDEX(title, '.', -1))
+WHERE title LIKE '%.%';
+
+
+# Remove rows with duplicate titles
+# Add id column as primary key as unique identifier
+ALTER TABLE Restaurants
+ADD COLUMN id INT AUTO_INCREMENT PRIMARY KEY;
+
+# Use Common Table Expression with the ROW_NUMBER() window function to identify duplicates
+WITH cte AS (
+	SELECT id,
+			# Assign a unique number to each row within each partition of title
+			ROW_NUMBER() OVER (PARTITION BY title ORDER BY id) as row_num
+            FROM Restaurants
+            )
+
+DELETE FROM Restaurants
+WHERE id IN(
+		SELECT id
+        FROM cte
+        WHERE row_num > 1  # Keeps only the first occurrence of each title 
+        );
+
+
+# Extract city and district from the address
+ALTER TABLE Restaurants
+ADD COLUMN city varchar(3),
+ADD COLUMN district varchar(3);
+
+UPDATE Restaurants
+SET 
+	city = SUBSTRING(address, 1,3),
+  district = SUBSTRING(address, 4,3);
+
+
+# Clean average price
+# Back up the original column
+ALTER TABLE Restaurants 
+ADD COLUMN `original_average_price` varchar(255);
+
+UPDATE Restaurants
+SET `original_average_price` = `average price`;
+
+# Keep only the numbers 
+UPDATE Restaurants
+SET `average price` = REGEXP_REPLACE(`average price`, '[^0-9]', '');
+
+# Replace empty value and none
+UPDATE Restaurants
+SET `average price` = null
+WHERE `average price` = 'None' OR `average price` = '';
+
+# Change column type
+ALTER TABLE Restaurants
+MODIFY COLUMN `average price` INT;
+
+# Certain restaurants list their average prices in a format such as XXX - XXXX.
+# Consequently, I extracted the price range and replaced the original average price with the calculated mean of this range
+ALTER TABLE restaurants
+ADD COLUMN average_price_1 int(10),
+ADD COLUMN average_price_2 int(10),
+ADD COLUMN average_price_3 int(10);
+
+UPDATE restaurants 
+SET 
+	average_price_1 = CAST(SUBSTRING(`average price`, 1, 3) AS UNSIGNED),
+	average_price_2 = CAST(SUBSTRING(`average price`, 4,4) AS UNSIGNED),
+    average_price_3 = (average_price_2 + average_price_1)/2,
+    `average price` = average_price_3
+WHERE LENGTH(`average price`) > 5; 
