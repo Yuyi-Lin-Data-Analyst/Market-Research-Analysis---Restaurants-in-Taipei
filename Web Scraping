@@ -1,0 +1,117 @@
+import pandas as pd
+from bs4 import BeautifulSoup
+import requests
+from time import sleep
+
+
+'''
+Gathering the Distinct Restaurant Categories
+The maximum restaurants displayed under each category tag is 1000, 
+therefore I firstly fetch a distinct list of all the categories tags listed in each restaurant, 
+then I will use them to search for all restaurants.
+'''
+
+category_list_distinct = []
+base_url = 'https://ifoodie.tw/explore/%E5%8F%B0%E5%8C%97%E5%B8%82/list?page='
+
+# maxium 67 pages displayed under each category 
+for page in range (1, 68): 
+    response = requests.get(base_url + str(page), verify = True)
+    soup = BeautifulSoup(response.content, "html.parser")
+    restaurants = soup.find_all('div', {'class':'jsx-3874052590 info-rows'})
+    
+    # Extract the categrory tags from the 1000 restaurants listed under category tag of "Taipei City"
+    
+    for r in restaurants:
+        categories = r.find_all(class_="jsx-3874052590 category")        
+
+        for category in categories:
+            if category.text not in category_list_distinct:
+                category_list_distinct.append(category.text)  
+
+    print(page)  
+    
+print(category_list_distinct) 
+
+
+base_url = 'https://ifoodie.tw/explore/%E5%8F%B0%E5%8C%97%E5%B8%82/list/'
+
+# create a dictionary and lists to store restaurant data
+restaurant_data = {}
+title = []
+address = []
+rating = []
+avg_price_list = []
+category_list = []
+
+# Fetch the HTML content for the current category and page
+for category in category_list_distinct:
+    for page in range (1, 68):
+    
+				# Send a GET request to the base URL with the current category and page parameters.
+				# Parse the HTML content using BeautifulSoup
+        response = requests.get(base_url + category + '?page=' + str(page), verify = True)
+        soup = BeautifulSoup(response.content, "html.parser")
+        restaurants = soup.find_all('div', {'class':'jsx-3874052590 restaurant-info'})
+
+        # Extract the text data from each of the restaurants
+        for r in restaurants:
+        
+            title.append(r.find(class_ = 'jsx-3874052590 title-row').text)
+            address.append(r.find(class_='jsx-3874052590 address-row').text)
+
+            # Include handling missing rating and average price data
+            rate = r.find(class_ = 'jsx-2373119553 text')
+            if rate is not None:
+                rating.append(rate.text)
+                
+            else:
+                rating.append('None')
+                
+                
+            avg_price = r.find(class_= 'jsx-3874052590 avg-price')
+            if avg_price is not None:
+                avg_price_list.append(avg_price.text)
+
+            else:
+                avg_price_list.append('None')
+
+            
+						# Collect all the category elements for the restaurant
+						# Create a list of categories for the current restaurant, filtering out the 'restaurant nearby' category
+            categories = r.find_all(class_="jsx-3874052590 category") 
+            items = []
+            for c in categories:
+            
+                if c.text != ' 附近餐廳':  # filter out 'restaurant nearby'
+                    items.append(c.text)
+
+                else:
+                    continue
+
+                category_list.append(items)
+
+
+        # Sleep for 3 seconds to avoid sending requests too quickly and potentially triggering IP blocking
+        sleep(3)
+        
+        
+# Save all data in the dictionary
+restaurant_data['title'] = title
+restaurant_data['address'] = address
+restaurant_data['raing'] = rating
+restaurant_data['average price'] = avg_price_list
+restaurant_data['categories'] = category_list
+
+# Convert the dictionary to dataframe 
+restaurant_data_df = pd.DataFrame.from_dict(restaurant_data, orient='index').transpose()
+
+# Preview data
+pd.set_option('display.max_columns', None) 
+print(restaurant_data_df.head())  
+
+rows, columns = restaurant_data_df.shape
+print(f"The DataFrame has {rows} rows and {columns} columns.")
+
+# Save the data to csv file
+restaurant_data_df.to_csv('ifoodie', index = False, encoding = 'utf-8')
