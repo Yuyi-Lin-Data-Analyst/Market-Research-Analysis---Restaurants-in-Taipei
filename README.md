@@ -41,9 +41,6 @@
   <p> </p>
 
  **Restaurant Density:**
-  <p> </p>
- ![Untitled](https://github.com/user-attachments/assets/a0a79809-2d7c-4cf5-9dca-ab635c046e34)
-  <p> </p>
  
 > There is a significant concentration of restaurants in a few key districts, with a long tail of districts having fewer establishments.
 > 
