@@ -3,7 +3,7 @@
 
 
 ## North Star Metric and Dimensions
-- **Pricing:** For understanding customer behavior and restaurant positioning.
+- **Price Distribution:** Calculate average spending per person for understanding customer behavior and restaurant positioning.
 - **Restaurant Desity:** Calculate the number of restaurants per district. This can indicate market saturation or opportunity.
 - **Geographic Dimension:** Districts in Taipei
 - **Restaurant Categories:** Types of cuisine and restaurants
@@ -12,27 +12,29 @@
 ## Summary of Insights
 
 ### Geographic Dimension
-- Average Spent Per Person
+ 
+![image-2](https://github.com/user-attachments/assets/85631ff2-38c5-4531-846a-d1f7283dcce9)
 
-  ![image](https://github.com/user-attachments/assets/e438c9e7-0a53-49ee-b911-dc92d7cc8e43)
-
-> **Central Business District Premium:** 中山區 and 大安區, known for their central locations and business activities, command the highest average prices. This likely reflects higher rents, a concentration of high-end establishments, and a clientele with higher disposable incomes.
+> **Price Distribution:**
 > 
+> - The standard deviation of 114.37 TWD for prices indicates a substantial spread in average prices across districts. → There are significant differences in average meal costs depending on which district you're in.
+>     - The highest average prices are in 中山區 (588 TWD) and 大安區 (583 TWD), both over 1.7 standard deviations above the mean.
+>     - The lowest average prices are in 文山區 (235 TWD), 1.35 standard deviations below the mean.
+> - Approximately 68% of districts have average prices within 114.37 TWD of the overall mean (389 ± 114.37 TWD).
 
-> **Entertainment and Shopping Areas:** 信義區, known for its shopping and entertainment, sits in the upper-mid range. This suggests a mix of high-end and more accessible dining options catering to diverse crowds.
+
+> **Category Variety:**
 > 
+> - The extremely small standard deviation for category variety (less than 1) indicates very little variation in the number of categories across districts. → Most districts have similar category variety, clustering around 76 categories.
+> - This suggests that regardless of location or price level, most districts offer a similar variety of cuisine types.
+> - 大同區 has the highest variety with 79 categories, while 南港區 has the lowest with 71.
+- Category Variety
 
-> **Residential Area Pricing:** More residential districts like 文山區 and 大同區 have the lowest average prices, likely reflecting a focus on everyday dining for local residents rather than tourist or business-oriented establishments.
+> **Price vs. Variety Relationship:**
 > 
-
-> **Suburban Variation:** Outer districts show varied pricing. 士林區, known for its night market and tourist attractions, has higher average prices compared to other suburban areas like 南港區 or 北投區.
-> 
-
-> **Price Consistency in Mid-Range:** Several districts (萬華區, 中正區, 南港區, 北投區) have very similar average prices, suggesting a degree of price standardization in mid-range dining across different areas of the city.
->
-
+> - The districts with the highest prices (中山區 and 大安區) also have above-average category variety.
+> - There are no districts that clearly fit the criteria of "high prices but low variety" that we were initially looking for.
   
-- Restaurant Desity
 
 
 
