@@ -80,10 +80,10 @@
 
 > Japanese Influence: Japanese cuisine, including 居酒屋 (izakaya), features prominently in the popular combinations. (e.g., 居酒屋 (izakaya) with hotpot)
 >
-
+<p> </p>
 
 ## Recommendations & Next Steps
-<p> </p>
+
 **Temporal Analysis**
 Analyze restaurant performance across different times of day, days of the week, and seasons.
 Required Data: Hourly/daily sales data, customer footfall, seasonal promotions.
