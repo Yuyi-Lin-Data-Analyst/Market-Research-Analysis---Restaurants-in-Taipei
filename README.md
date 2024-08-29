@@ -14,6 +14,7 @@
 ### Geographic Dimension
  
 ![image-2](https://github.com/user-attachments/assets/85631ff2-38c5-4531-846a-d1f7283dcce9)
+<p> </p>
 
 **Price Distribution:**
 > 
