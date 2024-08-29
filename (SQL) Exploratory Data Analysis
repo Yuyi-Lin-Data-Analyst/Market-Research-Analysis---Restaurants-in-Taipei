@@ -1,0 +1,216 @@
+# What is the distribution of restaurants across different districts?
+
+SELECT district, count(*) AS 'number of restaurants', total.total_count, 
+	ROUND((1.0 * count(*)/total.total_count) * 100) AS percentage
+FROM restaurants, 
+	(SELECT COUNT(*) AS total_count FROM restaurants) total
+GROUP BY district, total.total_count
+ORDER BY percentage DESC;
+
+
+# Which types of restaurants are over- or under-represented in specific districts?
+
+-- the values in categories field is in the format of list
+-- therefore I create a custom function get_array_element to removes the brackets, quotes, and extracts the nth element. 
+CREATE FUNCTION get_array_element(arr TEXT, idx INT)
+RETURNS TEXT DETERMINISTIC -- A deterministic function always returns the same results if given the same input values.
+RETURN TRIM(BOTH '\'' FROM TRIM(BOTH '[' FROM TRIM(BOTH ']' FROM REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(arr, ',', idx), ',', -1), '\'', ''))));
+
+-- use a recursive CTE to generate numbers, which will be used to extract each element from the list.
+WITH RECURSIVE numbers(n) AS (
+	SELECT 1
+    UNION ALL -- continue the sequence
+    SELECT n+1 FROM numbers WHERE n<100 -- recursively adds 1 to the previous number, stopping at 100.
+),
+
+-- expand the categories for each restaurant into separate rows with CTE
+exploded_categories AS(
+	SELECT
+		id,
+        title,
+        get_array_element(categories, numbers.n) AS category
+	FROM restaurants
+    CROSS JOIN
+		numbers
+	WHERE 
+		numbers.n <= (LENGTH(categories) - LENGTH(REPLACE(categories, ', ', ''))) +1  -- this condition calculates the number of elements by counting the commas and adding one
+		AND get_array_element(categories, numbers.n) != ''
+),
+
+
+-- calculate total restaurants per district
+total_per_district AS (
+	SELECT 
+		district, 
+		COUNT(DISTINCT id) AS total_restaurants
+	FROM restaurants
+	GROUP BY district
+),
+
+-- calculate total restaurants per category
+total_per_category AS (
+	SELECT 
+		category, 
+		count(DISTINCT id) AS total_restaurants
+	FROM exploded_categories 
+	GROUP BY category
+),
+
+-- restaurants per category per district
+total_category_per_district AS (
+	SELECT 
+		r.district,
+		ec.category,
+		COUNT(DISTINCT ec.id) AS total_restaurants
+	FROM exploded_categories ec
+	JOIN restaurants r 
+	ON ec.id = r.id
+	GROUP BY r.district, ec.category
+),
+
+-- calculate the overall total number of restaurants
+overall_total AS (
+	SELECT COUNT(DISTINCT id) AS total_restaurants
+    FROM restaurants
+)
+
+SELECT
+	cpd.district,
+    cpd.category,
+    cpd.total_restaurants,
+    tpd.total_restaurants AS district_total,
+    tpc.total_restaurants AS category_total,
+    ot.total_restaurants AS overall_total,
+    (cpd.total_restaurants / tpd.total_restaurants) AS district_proportion,
+    (tpc.total_restaurants / ot.total_restaurants) AS overall_proportion,
+    ((cpd.total_restaurants / tpd.total_restaurants) - (tpc.total_restaurants/ot.total_restaurants)) AS representation_difference
+
+
+FROM total_category_per_district cpd
+JOIN total_per_district tpd ON cpd.district = tpd.district
+JOIN total_per_category tpc ON cpd.category = tpc.category
+JOIN overall_total ot
+ORDER BY representation_difference DESC;
+
+
+# How does the average price point vary by district?
+
+SELECT district, avg(`average price`) AS average_price_district
+FROM restaurants
+GROUP by district
+ORDER BY average_price_district DESC;
+
+
+# How does pricing vary by location for similar restaurant types?
+
+WITH RECURSIVE numbers(n) AS (
+	SELECT 1
+    UNION ALL
+    SELECT n+1 FROM numbers WHERE n<100
+),
+
+exploded_categories AS(
+	SELECT
+		r.id,
+        r.title,
+        get_array_element(r.categories, numbers.n) AS category
+	FROM restaurants r
+    CROSS JOIN numbers
+	WHERE 
+		numbers.n <= (LENGTH(r.categories) - LENGTH(REPLACE(r.categories, ', ', ''))) +1
+		AND get_array_element(r.categories, numbers.n) != ''
+)
+
+SELECT 
+	ec.category,
+    r.district,
+    ROUND(AVG(CAST(`average price` AS DECIMAL(10,2))),0) AS avg_price
+FROM exploded_categories ec
+JOIN restaurants r 
+ON r.id = ec.id
+GROUP BY ec.category, r.district;
+
+
+# Are there locations with high prices but low variety, indicating potential for new entrants?
+
+WITH RECURSIVE numbers(n) AS (
+	SELECT 1
+    UNION ALL
+    SELECT n+1 FROM numbers WHERE n<100
+),
+
+exploded_categories AS(
+	SELECT
+		r.id,
+        r.title,
+        get_array_element(r.categories, numbers.n) AS category
+	FROM restaurants r
+    CROSS JOIN numbers
+	WHERE 
+		numbers.n <= (LENGTH(r.categories) - LENGTH(REPLACE(r.categories, ', ', ''))) +1
+		AND get_array_element(r.categories, numbers.n) != ''
+),
+
+district_metrics AS (
+	SELECT r.district,
+		ROUND(AVG(CAST(`average price`  AS DECIMAL(10,2))),0) AS avg_district_price,
+        COUNT(DISTINCT ec.category) AS category_variety,
+        COUNT(DISTINCT ec.id) AS restaurant_count
+	FROM exploded_categories ec
+    JOIN restaurants r
+    ON ec.id = r.id
+    GROUP BY district
+)
+
+
+
+SELECT
+	district,
+    restaurant_count,  
+    avg_district_price,
+    (SELECT ROUND(AVG(avg_district_price),0) FROM district_metrics) AS overal_average_district_price,
+    ROUND((avg_district_price - (SELECT AVG(avg_district_price) FROM district_metrics)) /
+							(SELECT STDDEV(avg_district_price) FROM district_metrics),2) AS price_z_score,
+	category_variety,
+    (SELECT ROUND(AVG(category_variety),0) FROM district_metrics) AS overall_category_variety,
+	ROUND((category_variety - (SELECT AVG(category_variety) FROM district_metrics))/
+							(SELECT STDDEV(category_variety) FROM district_metrics),2) AS variety_z_score
+FROM district_metrics
+ORDER BY 
+	avg_district_price DESC,
+    category_variety ASC;
+
+
+# Which combinations of restaurant types are most popular?
+
+WITH RECURSIVE numbers(n) AS (
+	SELECT 1
+    UNION ALL
+    SELECT n+1 FROM numbers WHERE n<100
+),
+
+exploded_categories AS(
+	SELECT
+		r.id,
+        r.title,
+        get_array_element(r.categories, numbers.n) AS category
+	FROM restaurants r
+    CROSS JOIN numbers
+	WHERE 
+		numbers.n <= (LENGTH(r.categories) - LENGTH(REPLACE(r.categories, ', ', ''))) +1
+		AND get_array_element(r.categories, numbers.n) != ''
+),
+
+Category_Combination AS(
+	SELECT 
+		id,
+        GROUP_CONCAT(DISTINCT category ORDER BY category SEPARATOR', ') AS category_combination
+	FROM exploded_categories
+    GROUP BY id
+)
+
+SELECT 
+	category_combination,
+	COUNT(*) AS combination_count
+FROM Category_Combination
+GROUP BY category_combination
