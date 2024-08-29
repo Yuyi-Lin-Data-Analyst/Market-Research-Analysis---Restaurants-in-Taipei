@@ -83,4 +83,17 @@
 
 
 ## Recommendations & Next Steps
+<p> </p>
+**Temporal Analysis**
+Analyze restaurant performance across different times of day, days of the week, and seasons.
+Required Data: Hourly/daily sales data, customer footfall, seasonal promotions.
+<p> </p>
 
+**Competition Intensity Mapping**
+Create a heat map of competition intensity for different cuisine types across districts.
+Required Data: Detailed categorization of restaurants, customer ratings, market share estimates.
+<p> </p>
+
+**Economic Indicator Correlation**
+Analyze how broader economic indicators correlate with restaurant performance across districts.
+Required Data: District-level economic data (average income, employment rates), correlation with restaurant metrics.
